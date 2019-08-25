@@ -12,7 +12,27 @@ const totalLikes = (blogs) => {
   return totalLikes
 }
 
+const favoriteBlog = (blogs) => {
+  blogsArr = [].concat(blogs)
+  let fav = null
+  let maxLikes = 0
+  blogsArr.forEach(blog => {
+    if(blog.likes >= maxLikes) {
+      fav = blog
+      maxLikes = blog.likes
+    }
+  })
+  return(
+    {
+      title : fav.title,
+      author: fav.author,
+      likes: fav.likes
+    }
+  )
+}
+
 module.exports = {
   dummy,
-  totalLikes
+  totalLikes,
+  favoriteBlog
 }
