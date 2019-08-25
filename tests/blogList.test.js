@@ -77,7 +77,7 @@ describe('total likes', () => {
 })
 
 describe('favorite blog', () => {
-  test('of a list returns right blog', () => {
+  test('returns right blog of a list', () => {
     const result = listHelper.favoriteBlog(blogs)
     expect(result).toEqual(
       {
