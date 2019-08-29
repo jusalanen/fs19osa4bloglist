@@ -34,8 +34,16 @@ test('blogs are returned as json of correct size', async () => {
   const response = await api.get('/api/blogs')
     .expect(200)
     .expect('Content-Type', /application\/json/)
-    
+
   expect(response.body.length).toBe(2)
+})
+
+test('identifier is shown as "id"' , async () => {
+  const response = await api.get('/api/blogs')
+  const blogs = [].concat(response.body)
+  blogs.forEach( blog => {
+    expect(blog.id).toBeDefined()
+  })
 })
 
 afterAll(() => {
