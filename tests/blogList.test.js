@@ -1,6 +1,6 @@
 const listHelper = require('../utils/list_helper')
 
-test('dummy returns one', () => {
+test.skip('dummy returns one', () => {
   const blogs = []
 
   const result = listHelper.dummy(blogs)
@@ -58,7 +58,7 @@ const blogs = [
   }  
 ]
 
-describe('total likes', () => {
+describe.skip('total likes', () => {
   const listWithOneBlog = [
     {
       _id: '5a422aa71b54a676234d17f8',
@@ -76,7 +76,7 @@ describe('total likes', () => {
   })
 })
 
-describe('favorite blog', () => {
+describe.skip('favorite blog', () => {
   test('returns the right blog', () => {
     const result = listHelper.favoriteBlog(blogs)
     expect(result).toEqual(
@@ -89,7 +89,7 @@ describe('favorite blog', () => {
   })
 })
 
-describe('most blogs', () => {
+describe.skip('most blogs', () => {
   test('returns the right blogger and the number of blogs', () => {
     const result = listHelper.mostBlogs(blogs)
     expect(result).toEqual(
@@ -101,7 +101,7 @@ describe('most blogs', () => {
   })
 })
 
-describe('most likes', () => {
+describe.skip('most likes', () => {
   test('returns the right blogger and the number of likes', () => {
     const result = listHelper.mostLikes(blogs)
     expect(result).toEqual(
