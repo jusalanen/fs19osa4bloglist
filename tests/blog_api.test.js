@@ -51,6 +51,23 @@ test('post increases the number of blogs by one', async () => {
   } 
 })
 
+test('likes set to zero if not present', async () => {
+  const newBlog = new Blog(
+    {
+      title: 'New Blog',
+      author: 'New Author',
+      url: 'localhost:something/new'
+    }
+  )
+  try {
+    const savedBlog = await api.post('api/blogs').send(newBlog)
+    expect(savedBlog.id).toBe(0)
+    console.log(savedBlog)
+  } catch (error) {
+    console.log(error)
+  }
+})
+
 afterAll(() => {
   mongoose.connection.close()
 })
