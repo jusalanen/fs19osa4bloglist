@@ -2,23 +2,9 @@ const mongoose = require('mongoose')
 const supertest = require('supertest')
 const app = require('../app')
 const Blog = require('../models/blog')
+const initBlogs = require('./test_helper')
 
 const api = supertest(app)
-
-const initBlogs = [
-  {
-    title: 'Blog One',
-    author: 'First Author',
-    url: 'localhost:something',
-    likes: 3
-  },
-  {
-    title: 'Blog Two',
-    author: 'Author Also',
-    url: 'localhost:something/2',
-    likes: 2
-  }
-]
 
 beforeEach(async () => {
   await Blog.deleteMany({})
@@ -44,6 +30,25 @@ test('identifier is shown as "id"' , async () => {
   blogs.forEach( blog => {
     expect(blog.id).toBeDefined()
   })
+})
+
+test('post increases the number of blogs by one', async () => {
+  const newBlog = new Blog(
+    {
+      title: 'New Blog',
+      author: 'New Author',
+      url: 'localhost:something/new',
+      likes: 0
+    }
+  )
+  try {
+    await api.post('api/blogs').send(newBlog)
+    .expect(201)
+    const response = await api.get('/api/blogs')
+    expect(response.body.length).toBe(initBlogs + 1)
+  } catch (error) {
+    console.log(error)
+  } 
 })
 
 afterAll(() => {
