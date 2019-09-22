@@ -90,6 +90,21 @@ test('delete removes the blog with given id', async () => {
   expect(titles).not.toContain(blogToDel.title)
 })
 
+test('put updates the blog with given id', async () => {
+  const response = await api.get('/api/blogs')
+  const blogToUpdate = response.body[1]
+  blogToUpdate.title = 'Updated Title'
+
+  await api.put('/api/blogs/' + blogToUpdate.id).send(blogToUpdate)
+  .expect(200)
+  
+  const resp = await api.get('/api/blogs')
+  expect(resp.body.length).toBe(initBlogs.length)
+
+  const titles = resp.body.map(blog => blog.title)
+  expect(titles).toContain('Updated Title')
+})
+
 afterAll(() => {
   mongoose.connection.close()
 })
