@@ -41,16 +41,15 @@ test('post increases the number of blogs by one', async () => {
   }
 
   await api.post('/api/blogs').send(newBlog)
-  .expect(201)
   const response = await api.get('/api/blogs')
   expect(response.body.length).toBe(initBlogs.length + 1)
 })
 
-test('likes set to zero if not present', async () => {
+test('likes set to zero if not set in request', async () => {
   const newBlog = {
     title: 'New Blog',
     author: 'New Author',
-    url: 'localhost:something/new2',
+    url: 'localhost:something/new2'
   }
   const response = await api.post('/api/blogs').send(newBlog)
   .expect(201)
@@ -59,12 +58,36 @@ test('likes set to zero if not present', async () => {
 })
 
 test('post returns status 400 if title or url is undefined', async () => {
-  const newBlog = {
+  let newBlog = {
+    title: 'New Blog',
     author: 'New Author',
     likes: 55
   }
   await api.post('/api/blogs').send(newBlog)
   .expect(400)
+
+  newBlog = {
+    author: 'New Author',
+    url: 'localhost:something/new3',
+    likes: 0
+  }
+  await api.post('/api/blogs').send(newBlog)
+  .expect(400)
+
+})
+
+test('delete removes the blog with given id', async () => {
+  const response = await api.get('/api/blogs')
+  const blogToDel = response.body[1]
+
+  await api.delete('/api/blogs/' + blogToDel.id)
+  .expect(204)
+  
+  const resp = await api.get('/api/blogs')
+  expect(resp.body.length).toBe(initBlogs.length - 1)
+
+  const titles = resp.body.map(blog => blog.title)
+  expect(titles).not.toContain(blogToDel.title)
 })
 
 afterAll(() => {
