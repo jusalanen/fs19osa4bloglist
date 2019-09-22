@@ -20,12 +20,8 @@ test('blogs are returned as json of correct size', async () => {
   const response = await api.get('/api/blogs')
     .expect(200)
     .expect('Content-Type', /application\/json/)
-<<<<<<< Updated upstream
 
-  expect(response.body.length).toBe(2)
-=======
   expect(response.body.length).toBe(initBlogs.length)
->>>>>>> Stashed changes
 })
 
 test('identifier is shown as "id"' , async () => {
@@ -37,61 +33,29 @@ test('identifier is shown as "id"' , async () => {
 })
 
 test('post increases the number of blogs by one', async () => {
-<<<<<<< Updated upstream
-  const newBlog = new Blog(
-    {
-      title: 'New Blog',
-      author: 'New Author',
-      url: 'localhost:something/new',
-      likes: 0
-    }
-  )
-  try {
-    await api.post('api/blogs').send(newBlog)
-    .expect(201)
-    const response = await api.get('/api/blogs')
-    expect(response.body.length).toBe(initBlogs + 1)
-  } catch (error) {
-    console.log(error)
-  } 
-})
-
-test('likes set to zero if not present', async () => {
-=======
   const newBlog = {
     title: 'New Blog',
     author: 'New Author',
     url: 'localhost:something/new',
     likes: 0
   }
+
   await api.post('/api/blogs').send(newBlog)
   .expect(201)
   const response = await api.get('/api/blogs')
   expect(response.body.length).toBe(initBlogs.length + 1)
 })
 
-test('likes set to zero if not set in request', async () => {
->>>>>>> Stashed changes
-  const newBlog = new Blog(
-    {
-      title: 'New Blog',
-      author: 'New Author',
-      url: 'localhost:something/new'
-    }
-  )
-<<<<<<< Updated upstream
-  try {
-    const savedBlog = await api.post('api/blogs').send(newBlog)
-    expect(savedBlog.id).toBe(0)
-    console.log(savedBlog)
-  } catch (error) {
-    console.log(error)
+test('likes set to zero if not present', async () => {
+  const newBlog = {
+    title: 'New Blog',
+    author: 'New Author',
+    url: 'localhost:something/new2',
   }
-=======
-  const resp = await api.post('/api/blogs').send(newBlog)
-  const savedBlog = resp.body
-  expect(savedBlog.likes).toBe(0)
->>>>>>> Stashed changes
+  const response = await api.post('/api/blogs').send(newBlog)
+  .expect(201)
+
+  expect(response.body.likes).toBe(0)
 })
 
 afterAll(() => {
