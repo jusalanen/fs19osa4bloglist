@@ -15,15 +15,19 @@ blogsRouter.post('/', async (request, response, next) => {
   }
   const users = await User.find({})
   const userNr = Math.floor(Math.random() *2)
+  const addingUser = users[userNr]
+
   const newBlog = new Blog({
     title: body.title,
     author: body.author,
     url: body.url,
     likes: body.likes === undefined ? 0 : body.likes,
-    user: users[userNr]
+    user: addingUser._id
   })
   try {
   const savedBlog = await newBlog.save()
+  addingUser.blogs = addingUser.blogs.concat(savedBlog._id)
+    await addingUser.save()
   response.status(201).json(savedBlog.toJSON())
   } catch (ex) {
     console.log(ex.message)
