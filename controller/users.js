@@ -14,8 +14,8 @@ usersRouter.post('/', async (request, response, next) => {
         error: 'username and password must have at least 3 characters' })
     }
 
-    const userrsInDb = await User.find({})
-    const usernames = userrsInDb.map(user => user.username)
+    const usersInDb = await User.find({})
+    const usernames = usersInDb.map(user => user.username)
     if(usernames.includes(body.username)) {
       return response.status(400).json({ 
         error: 'username must be unique' })

@@ -11,10 +11,10 @@ blogsRouter.get('/', async (request, response) => {
 blogsRouter.post('/', async (request, response, next) => {
   const body = request.body
   if (body.title === undefined || body.url === undefined) {
-    return response.status(400).end()
+    return response.status(400).json( { error: 'title or url missing' })
   }
   const users = await User.find({})
-  const userNr = Math.floor(Math.random() *2)
+  const userNr = Math.floor(Math.random() * 2)
   const addingUser = users[userNr]
 
   const newBlog = new Blog({
