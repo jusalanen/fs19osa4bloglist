@@ -13,4 +13,13 @@ const initBlogs = [
   }
 ]
 
-module.exports = initBlogs
+const initUser = [
+  {
+    username: 'tester',
+    name: 'Test User',
+    password: 'testpswd',
+    blogs: []
+  }
+]
+
+module.exports = { initBlogs, initUser }

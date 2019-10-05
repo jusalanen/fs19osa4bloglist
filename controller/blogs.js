@@ -1,6 +1,7 @@
 const blogsRouter = require('express').Router()
 const Blog = require('../models/blog')
 const User = require('../models/user')
+const jwt = require('jsonwebtoken')
 
 blogsRouter.get('/', async (request, response) => {
   const blogs = await Blog.find({}).populate('user', { username: 1, name: 1 })
@@ -8,27 +9,42 @@ blogsRouter.get('/', async (request, response) => {
   response.json(blogs.map(blog => blog.toJSON()))
 })
 
+const getTokenFrom = request => {
+  const authorization = request.get('authorization')
+  if (authorization && authorization.toLowerCase().startsWith('bearer ')) {
+    return authorization.substring(7)
+  }
+  return null
+}
+
 blogsRouter.post('/', async (request, response, next) => {
   const body = request.body
   if (body.title === undefined || body.url === undefined) {
     return response.status(400).json( { error: 'title or url missing' })
   }
-  const users = await User.find({})
-  const userNr = Math.floor(Math.random() * 2)
-  const addingUser = users[userNr]
 
-  const newBlog = new Blog({
-    title: body.title,
-    author: body.author,
-    url: body.url,
-    likes: body.likes === undefined ? 0 : body.likes,
-    user: addingUser._id
-  })
+  const token = getTokenFrom(request)
+  
   try {
-  const savedBlog = await newBlog.save()
-  addingUser.blogs = addingUser.blogs.concat(savedBlog._id)
+    const decodedToken = jwt.verify(token, process.env.SECRET)
+    if (!token || !decodedToken.id) {
+      return response.status(401).json({ error: 'token missing or invalid' })
+    }
+
+    const addingUser = await User.findById(decodedToken.id)
+    
+    const newBlog = new Blog({
+      title: body.title,
+      author: body.author,
+      url: body.url,
+      likes: body.likes === undefined ? 0 : body.likes,
+      user: addingUser._id
+    })
+
+    const savedBlog = await newBlog.save()
+    addingUser.blogs = addingUser.blogs.concat(savedBlog._id)
     await addingUser.save()
-  response.status(201).json(savedBlog.toJSON())
+    response.status(201).json(savedBlog.toJSON())
   } catch (ex) {
     console.log(ex.message)
     next(ex)

@@ -2,18 +2,61 @@ const mongoose = require('mongoose')
 const supertest = require('supertest')
 const app = require('../app')
 const Blog = require('../models/blog')
-const initBlogs = require('./test_helper')
+const initBlogs = require('./test_helper').initBlogs
+const initUser = require('./test_helper').initUser
+const User = require('../models/user')
+const jwt = require('jsonwebtoken')
 
 const api = supertest(app)
 
+const getLoginToken = async () => {
+  const user = await User.find({})
+  if(user.length > 0) {
+    return jwt.sign({
+      username: user[0].username,
+      id: user[0]._id
+    }, process.env.SECRET)
+  }
+  return null
+}
+
 beforeEach(async () => {
   await Blog.deleteMany({})
+  await User.deleteMany({})
+
+  let userObj = new User(initUser[0])
+  await userObj.save()
 
   let blogObject = new Blog(initBlogs[0])
   await blogObject.save()
 
   blogObject = new Blog(initBlogs[1])
   await blogObject.save()
+})
+
+test.only('post with logged user return correct blog with user id', async () => {
+  const token = await getLoginToken()
+  const users = await User.find({ username: 'tester' })
+  const userId = users[0]._id.toString()
+  console.log(userId)
+  
+  const response = await api.post('/api/blogs')
+    .send({
+      "title": "Blog Again",
+      "author": "Again Author",
+      "url": "localhost:something/xxyyzz",
+      "likes": 0
+    })
+    .set('authorization', 'bearer ' + token)
+    .set('Accept', 'application/json')
+
+  const savedBlog = response.body
+  console.log(savedBlog)
+  expect(response.status).toBe(201)
+  
+  expect(savedBlog.user.toString()).toBe(userId)
+  const blogs = await api.get('/api/blogs')
+  expect(blogs.body.length).toBe(initBlogs.length + 1)
 })
 
 test('blogs are returned as json of correct size', async () => {
