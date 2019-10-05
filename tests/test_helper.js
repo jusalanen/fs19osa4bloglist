@@ -19,6 +19,12 @@ const initUser = [
     name: 'Test User',
     password: 'testpswd',
     blogs: []
+  },
+  {
+    username: 'wrong',
+    name: 'Wrong User',
+    password: 'wrongpswd',
+    blogs: []
   }
 ]
 
