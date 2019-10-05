@@ -36,7 +36,7 @@ beforeEach(async () => {
 
 test.only('post with logged user return correct blog with user id', async () => {
   const token = await getLoginToken()
-  const users = await User.find({ username: 'tester' })
+  const users = await User.find({})
   const userId = users[0]._id.toString()
   console.log(userId)
   
