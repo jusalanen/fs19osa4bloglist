@@ -17,13 +17,15 @@ const customMorgan = () => morgan( (tokens, req, res) => {
 })
 
 const tokenExtractor = (request, response, next) => {
+  try {
   const authorization = request.get('authorization')
   if (authorization && authorization.toLowerCase().startsWith('bearer ')) {
     request.token = jwt.verify(authorization.substring(7), process.env.SECRET)
   } else {
     request.token = null
+  }} catch (ex) {
+  next(ex)
   }
-  next()
 }
 
 module.exports = { customMorgan, tokenExtractor }

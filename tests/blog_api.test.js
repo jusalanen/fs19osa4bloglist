@@ -34,7 +34,7 @@ beforeEach(async () => {
   await blogObject.save()
 })
 
-test.only('post with logged user return correct blog with user id', async () => {
+test.only('post with logged user adds a blog with user id', async () => {
   const token = await getLoginToken()
   const users = await User.find({})
   const userId = users[0]._id.toString()
